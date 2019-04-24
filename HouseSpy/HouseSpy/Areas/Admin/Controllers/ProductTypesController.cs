@@ -23,13 +23,13 @@ namespace HouseSpy.Areas.Admin.Controllers
             return View(_context.ProductTypes.ToList());
         }
 
-        
+        //get create
         public IActionResult Create()
         {
             return View();
         }
 
-        //create action method
+        //post create action method
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductTypes productTypes)
@@ -41,6 +41,92 @@ namespace HouseSpy.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(productTypes);
+        }
+
+
+        //get edit
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var productType = await _context.ProductTypes.FindAsync(id);
+            if (productType == null)
+            {
+                return NotFound();
+            }
+            return View(productType);
+        }
+
+
+        //post edit action method
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ProductTypes productTypes)
+        {
+            if (id != productTypes.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _context.ProductTypes.Update(productTypes);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(productTypes);
+        }
+
+        //get details action method
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var productType = await _context.ProductTypes.FindAsync(id);
+
+            if (productType == null)
+            {
+                return NotFound();
+            }
+
+            return View(productType);
+        }
+
+        //get delete action method
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var productType = await _context.ProductTypes.FindAsync(id);
+
+            if (productType == null)
+            {
+                return NotFound();
+            }
+
+            return View(productType);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirm(int id)
+        {
+            var productType = await _context.ProductTypes.FindAsync(id);
+            if (productType == null)
+            {
+                return NotFound();
+            }
+            _context.ProductTypes.Remove(productType);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
