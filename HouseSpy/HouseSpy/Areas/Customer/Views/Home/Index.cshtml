@@ -1,8 +1,33 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<HouseSpy.Models.Products>
+@{
+    ViewData["Title"] = "Index";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<br />
+<div class="row">
+    @foreach(var product in Model)
+    {
+        <div class="col-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">
+                        <label style="font-size:23px; color: steelblue">@product.Name</label>
+                    </h4>
+                </div>
+                <img class="card-img-top" style="height:100%" src="@product.Image" alt="image" />
+                <div class="card-body">
+                    <div class="row d-flex justify-content-center align-items-center">
+                        <div class="col-6">
+                            <div class="btn-group">
+                                <label style="font-size:20px; color: #a51313"><strong>@product.Price</strong></label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <a asp-action="Details" asp-route-id="@product.Id" asp-controller="Home" class="btn btn-success pull-right btn-outline-info">View Detail</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>

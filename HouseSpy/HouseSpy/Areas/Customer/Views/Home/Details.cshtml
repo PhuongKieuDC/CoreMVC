@@ -1,0 +1,104 @@
+﻿@model HouseSpy.Models.Products
+@using HouseSpy.Extensions
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Details";
+}
+
+<br />
+<h2 class="text-info">Detail Product</h2>
+
+<form method="post">
+    <div class="p-4 border rounded row">
+        <input asp-for="Id" hidden />
+        <div class="col-8">
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Name"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Name" class="form-control" disabled />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Price"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Price" class="form-control" disabled />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="ProductTypes"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="ProductTypes.Name" class="form-control" disabled />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="SpecialTag"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="SpecialTag.Name" class="form-control" disabled />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="ShadeColor"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="ShadeColor" class="form-control" disabled />
+                </div>
+            </div>
+            @*<div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Available"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="Available" type="checkbox" disabled />
+                    </div>
+                </div>*@
+            <div class="form-group row">
+                <div class="col-4">
+
+                </div>
+                <div class="col-8">
+                    @{
+                        bool isInBag = false;
+                        List<int> lstCart = HttpContextAccessor.HttpContext.Session.Get<List<int>>("ssShoppingCart");
+                        if (lstCart != null && lstCart.Contains(Model.Id))
+                        {
+                            isInBag = true;
+                        }
+                    }
+
+                    @if (isInBag)
+                    {
+                        <button type="submit" value="Remove form Bag" asp-action="Remove" asp-route-id="@Model.Id" class="btn btn-danger form-control">Remove from Bag</button>
+                    }
+                    else
+                    {
+                        <button type="submit" value="Add to Bag" asp-route-id="@Model.Id" class="btn btn-primary form-control">Add to Bag</button>
+                    }
+
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <img src="@Model.Image" width="100%" style="border-radius:5px" />
+            <br />
+            @if (Model.Available)
+            {
+                <img src="~/images/ProductImage/instock.png" style="width:65px" class="mt-4" />
+            }
+        </div>
+        <div class="form-group">
+            <a asp-action="Index" asp-controller="Home" class="btn btn-success">Back to list</a>
+        </div>
+    </div>
+</form>
+
+
