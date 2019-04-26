@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using HouseSpy.Data;
+using HouseSpy.Models;
 using HouseSpy.Models.ViewModel;
 using HouseSpy.Utility;
 using Microsoft.AspNetCore.Hosting.Internal;
@@ -125,7 +126,7 @@ namespace HouseSpy.Controllers
 
                     if (System.IO.File.Exists(Path.Combine(uploads, ProductsVM.Products.Id+extension_old)))
                     {
-                        System.IO.File.Exists(Path.Combine(uploads, ProductsVM.Products.Id + extension_old));
+                        System.IO.File.Delete(Path.Combine(uploads, ProductsVM.Products.Id + extension_old));
                     }
                     using (var filestream = new FileStream(Path.Combine(uploads, ProductsVM.Products.Id + extension_new), FileMode.Create))
                     {
@@ -152,6 +153,69 @@ namespace HouseSpy.Controllers
             }
 
             return View(ProductsVM);
+        }
+
+        //get details action method
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            ProductsVM.Products = await _context.Products.Include(x => x.ProductTypes).Include(x => x.SpecialTag).Where(x => x.Id == id).SingleOrDefaultAsync();
+
+            if (ProductsVM.Products == null)
+            {
+                return NotFound();
+            }
+
+            return View(ProductsVM);
+        }
+
+        //get delete action method
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            ProductsVM.Products = await _context.Products.Include(x => x.ProductTypes).Include(x => x.SpecialTag).Where(x => x.Id == id).SingleOrDefaultAsync();
+
+            if (ProductsVM.Products == null)
+            {
+                return NotFound();
+            }
+
+            return View(ProductsVM);
+        }
+
+        //post delete action method
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirm(int id)
+        {
+            string webRootPath = _hostingEnviroment.WebRootPath;
+            Products products = await _context.Products.FindAsync(id);
+             
+            if (products == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var uploads = Path.Combine(webRootPath, SD.ImageFolder);
+                var extension = Path.GetExtension(products.Image);
+
+                if (System.IO.File.Exists(Path.Combine(uploads, products.Id+extension)))
+                {
+                    System.IO.File.Delete(Path.Combine(uploads, products.Id + extension));
+                }
+                _context.Products.Remove(products);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

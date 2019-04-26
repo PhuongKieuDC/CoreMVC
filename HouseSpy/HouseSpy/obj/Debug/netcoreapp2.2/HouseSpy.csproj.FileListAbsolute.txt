@@ -48,3 +48,5 @@ D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Areas\Admin\Views\Spe
 D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Areas\Admin\Views\Products\Index.g.cshtml.cs
 D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Areas\Admin\Views\Products\Create.g.cshtml.cs
 D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Areas\Admin\Views\Products\Edit.g.cshtml.cs
+D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Areas\Admin\Views\Products\Details.g.cshtml.cs
+D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Areas\Admin\Views\Products\Delete.g.cshtml.cs
