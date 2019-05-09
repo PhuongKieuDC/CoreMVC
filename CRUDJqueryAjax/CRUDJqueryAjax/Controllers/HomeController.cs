@@ -43,6 +43,53 @@ namespace CRUDJqueryAjax.Controllers
             });
             return Json(value, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult SaveDatabase(StudentViewModel model)
+        {
+            var result = false;
+            try
+            {
+                if (model.StudentId > 0)
+                {
+                    Student stu = db.Students.SingleOrDefault(x => x.IsDeleted == false && x.StudentId == model.StudentId);
+                    stu.StudentName = model.StudentName;
+                    stu.Email = model.Email;
+                    stu.DepartmentId = model.DepartmentId;
+                    db.SaveChanges();
+                    result = true;
+                }
+                else
+                {
+                    Student st = new Student();
+                    st.StudentName = model.StudentName;
+                    st.Email = model.Email;
+                    st.DepartmentId = model.DepartmentId;
+                    st.IsDeleted = false;
+                    db.Students.Add(st);
+                    db.SaveChanges();
+                    result = true;
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult DeleteStudent(int StudentId)
+        {
+            var result = false;
+            Student st = db.Students.SingleOrDefault(x => x.IsDeleted == false && x.StudentId == StudentId);
+            if (st != null)
+            {
+                st.IsDeleted = true;
+                db.SaveChanges();
+                result = true;
+            }
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

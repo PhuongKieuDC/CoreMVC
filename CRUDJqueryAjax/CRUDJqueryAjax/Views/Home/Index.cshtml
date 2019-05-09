@@ -56,6 +56,25 @@
             </div>
         </div>
     </div>
+
+    @*Create modal popup delete confirm*@
+    <div class="modal fade" id="modalDelete">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                    <h4>Delete Student Confirm</h4>
+                </div>
+                <div class="modal-body">
+                    <h4>Are you sure delete student</h4>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-primary" data-dismiss="modal">Cancle</a>
+                    <a href="#" class="btn btn-danger" onclick="ConfirmDelete()">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -80,6 +99,7 @@
     //show modal add new student
     function AddNewStudent(StudentId) {
         $('#form')[0].reset();//reset form when click
+        $('#StuId').val(0);
         $('#titleModal').html("Add new student");
         $('#mymodal').modal();
     }
@@ -98,7 +118,40 @@
                 $('#StuName').val(obj.StudentName);
                 $('#Email').val(obj.Email);
                 $('#DropDep option:selected').text(obj.Department.DepartmentName);
+                $('#DropDep option:selected').val(obj.DepartmentId);
                 console.log(obj);
+            }
+        })
+    }
+
+    $('#Save').click(function () {
+        var data = $('.submitForm').serialize();
+        $.ajax({
+            type: "Post",
+            url: "/Home/SaveDatabase",
+            data: data,
+            success: function (result) {
+                alert("Success");
+                window.location.href = "/home/index";
+                $('#mymodal').modal("hide");
+                console.log(result);
+            }
+        })
+    })
+
+    //delete student
+    function DeleteStudent(StudentId) {
+        $('#StuId').val(StudentId);
+        $('#modalDelete').modal("show");
+    }
+    function ConfirmDelete() {
+        var StuId = $('#StuId').val();
+        $.ajax({
+            type: "Post",
+            url: "/Home/DeleteStudent?StudentId=" + StuId,
+            success: function (result) {
+                $('#modalDelete').modal("hide");
+                $(".row_" + StuId).remove();
             }
         })
     }
