@@ -114,7 +114,7 @@ namespace HouseSpy.Controllers
             {
                 string webRootPath = _hostingEnviroment.WebRootPath;
                 var files = HttpContext.Request.Form.Files;
-
+                //find id product to edit
                 var productFromDb = _context.Products.Where(x => x.Id == ProductsVM.Products.Id).FirstOrDefault();
 
                 if (files.Count > 0 && files[0] != null)

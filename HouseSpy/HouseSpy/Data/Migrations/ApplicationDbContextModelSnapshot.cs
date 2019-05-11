@@ -19,6 +19,27 @@ namespace HouseSpy.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("HouseSpy.Models.Appointments", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("AppointmentDate");
+
+                    b.Property<string>("CustomerEmail");
+
+                    b.Property<string>("CustomerName");
+
+                    b.Property<string>("CustomerPhoneNumber");
+
+                    b.Property<bool>("isConfirmed");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Appointments");
+                });
+
             modelBuilder.Entity("HouseSpy.Models.ProductTypes", b =>
                 {
                     b.Property<int>("Id")
@@ -60,6 +81,25 @@ namespace HouseSpy.Data.Migrations
                     b.HasIndex("SpecialTagId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("HouseSpy.Models.ProductsSelectedForAppointment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AppointmentId");
+
+                    b.Property<int>("ProductId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductsSelectedForAppointments");
                 });
 
             modelBuilder.Entity("HouseSpy.Models.SpecialTag", b =>
@@ -251,6 +291,19 @@ namespace HouseSpy.Data.Migrations
                     b.HasOne("HouseSpy.Models.SpecialTag", "SpecialTag")
                         .WithMany()
                         .HasForeignKey("SpecialTagId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("HouseSpy.Models.ProductsSelectedForAppointment", b =>
+                {
+                    b.HasOne("HouseSpy.Models.Appointments", "Appointments")
+                        .WithMany()
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("HouseSpy.Models.Products", "Products")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
