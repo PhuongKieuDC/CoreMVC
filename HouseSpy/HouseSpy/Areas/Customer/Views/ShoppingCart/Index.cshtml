@@ -8,7 +8,7 @@
 <form method="post">
     <h2 class="text-info">Your Shopping Cart</h2>
     <br />
-    @if(Model.Products.Count > 0)
+    @if (Model.Products.Count > 0)
     {
         <div class="container border border-secondary rounded" style="padding:15px">
             <div class="row">
@@ -30,7 +30,7 @@
                             </th>
                             <th></th>
                         </tr>
-                        @foreach(var item in Model.Products)
+                        @foreach (var item in Model.Products)
                         {
                             <tr>
                                 <td>
@@ -62,9 +62,49 @@
                 </div>
 
                 <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Name: </label>
+                        <input asp-for="@Model.Appointments.CustomerName" class="form-control" />
+                    </div>
 
+                    <div class="form-group">
+                        <label>Phone: </label>
+                        <input asp-for="@Model.Appointments.CustomerPhoneNumber" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email: </label>
+                        <input asp-for="@Model.Appointments.CustomerEmail" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Appointment Date: </label>
+                        <input asp-for="@Model.Appointments.AppointmentDate" class="form-control" type="text" id="datepicker" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Appointment Time: </label>
+                        <input asp-for="@Model.Appointments.AppointmentTime" class="form-control" type="text" id="timepicker" />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success form-control btn-sm" id="btnPlaceOrder">Shedule Appointment</button>
+                    </div>
                 </div>
             </div>
         </div>
     }
+    else
+    {
+        <h2>No item was selected</h2>
+    }
 </form>
+@section Scripts{
+    <script>
+        $(function () {
+            $("#datepicker").datepicker({
+                minDate: +1, macDate: "+3M"
+            });
+            $('#timepicker').timepicker({});
+        });
+    </script>
+}

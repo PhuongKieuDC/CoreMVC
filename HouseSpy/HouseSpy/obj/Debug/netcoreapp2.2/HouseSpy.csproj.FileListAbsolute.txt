@@ -52,3 +52,6 @@ D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Areas\Admin\Views\Pro
 D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Areas\Admin\Views\Products\Delete.g.cshtml.cs
 D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Areas\Customer\Views\Home\Details.g.cshtml.cs
 D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Areas\Customer\Views\ShoppingCart\Index.g.cshtml.cs
+D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Views\Shared\_AppointmentProductDetail.g.cshtml.cs
+D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Views\Shared\_AppointmentCustomerDetails.g.cshtml.cs
+D:\CoreMVC\HouseSpy\HouseSpy\obj\Debug\netcoreapp2.2\Razor\Areas\Customer\Views\ShoppingCart\AppointmentConfirm.g.cshtml.cs

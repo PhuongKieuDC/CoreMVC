@@ -1,0 +1,17 @@
+﻿@model HouseSpy.Models.ViewModel.ShoppingCartViewModel
+@{
+    ViewData["Title"] = "AppointmentConfirm";
+}
+
+<br />
+<h2>Appointment Confirmtion</h2>
+<div class="form-text">
+    Your appointment has been submited.
+</div>
+<br />
+
+<partial name="~/Views/Shared/_AppointmentCustomerDetails.cshtml" model="Model.Appointments"/>
+<partial name="~/Views/Shared/_AppointmentProductDetail.cshtml" model="Model.Products" />
+<a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-success">Back to Home</a>
+
+

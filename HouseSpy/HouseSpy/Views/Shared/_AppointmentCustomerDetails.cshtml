@@ -1,0 +1,46 @@
+﻿@model HouseSpy.Models.Appointments
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<h4 class="text-success">Appointment Details</h4>
+
+<div style="background-color: grey; padding: 20px; margin-bottom:30px" class="container border">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label class="col-md-2">Name: </label>
+                <div class="col-md-10">
+                    <input asp-for="@Model.CustomerName" disabled class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label class="col-md-2">Email: </label>
+                <div class="col-md-10">
+                    <input asp-for="@Model.CustomerEmail" disabled class="form-control" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label class="col-md-2">Date: </label>
+                <div class="col-md-10">
+                    <input asp-for="@Model.AppointmentDate" disabled class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label class="col-md-2">Time: </label>
+                <div class="col-md-10">
+                    <input asp-for="@Model.AppointmentTime" disabled class="form-control" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
