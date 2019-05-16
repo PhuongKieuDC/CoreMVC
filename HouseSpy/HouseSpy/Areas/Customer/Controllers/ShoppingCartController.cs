@@ -48,12 +48,14 @@ namespace HouseSpy.Areas.Customer.Controllers
         [ActionName("Index")]
         public IActionResult IndexPost()
         {
+            //add appointment to database
             List<int> lstCartItem = HttpContext.Session.Get<List<int>>("ssShoppingCart");
             ShoppingCartVM.Appointments.AppointmentDate = ShoppingCartVM.Appointments.AppointmentDate.AddHours(ShoppingCartVM.Appointments.AppointmentTime.Hour).AddMinutes(ShoppingCartVM.Appointments.AppointmentTime.Minute);
             Appointments appointments = ShoppingCartVM.Appointments;
             _context.Appointments.Add(appointments);
             _context.SaveChanges();
 
+            //add productselectedforappointment to database
             int apponitmentId = appointments.Id;
 
             foreach(int productId in lstCartItem)
