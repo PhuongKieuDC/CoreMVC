@@ -1,0 +1,222 @@
+﻿@model WebsiteOnline.Models.ViewModel.PageViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script src="~/Scripts/jquery.validate.min.js"></script>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+
+<div class="container" style="margin-top: 20px">
+    <a class="btn btn-info" onclick="AddNewPage(0)">Add New Page</a>
+    <br />
+    <table class="table table-striped table-responsive sorting" id="pages">
+        <thead>
+            <tr>
+                <th>Ma Page</th>
+                <th>Title</th>
+                <th>Slug</th>
+                <th>HasSidebar</th>
+                <th>Action(Edit)</th>
+                <th>Action(Delete)</th>
+
+            </tr>
+        </thead>
+        <tbody id="LoadListPage">
+            <tr id="LoadingStatus" style="color: red"></tr>
+        </tbody>
+    </table>
+    <a href="/Admin/Dashboard" class="btn btn-success" style="margin-top:15px">Back to dashboard</a>
+</div>
+
+@*create modal*@
+<div class="modal fade" id="mymodal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h4 id="titleModal"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="form">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <fieldset class="submitForm">
+                        @Html.HiddenFor(m => m.MaPage, new { @id = "MaPage" })
+                        <div class="form-group">
+                            @Html.TextBoxFor(m => m.Title, new { @id = "Title", @class = "form-control", @placeholder = "Title" })
+                            @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.TextBoxFor(m => m.Slug, new { @id = "Slug", @class = "form-control", @placeholder = "Slug" })
+                            @Html.ValidationMessageFor(m => m.Slug, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.TextAreaFor(m => m.Body, new { @id = "Body", @class = "form-control", @placeholder = "Body" })
+                            @Html.ValidationMessageFor(m => m.Body, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Sidebar</label>
+                            @Html.EditorFor(m => m.HasSidebar, new { @id = "HasSidebar", @class = "form-control" })
+                            @*<input type="checkbox" name="HasSidebar" id="HasSidebar" value="HasSidebar"/>*@
+                            @Html.ValidationMessageFor(m => m.HasSidebar, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <a class="btn btn-block btn btn-success" id="Save">Save</a>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Create popup delete confrim *@
+<div class="modal fade" id="modalConfirm">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h4>Delete Confirm</h4>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure delete page</h4>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary" data-dismiss="modal">Cancel</a>
+                <a class="btn btn-danger" onclick="DeleteConfirm()">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+<script>
+    //JSON.Parse: chuyen mot text doi thanh mot object
+    //$('.submitForm').serialize() lay cac gia tri thanh phan cua form
+    $('#LoadingStatus').html("Loading..........");
+    $.get("/Admin/Pages/GetListPage", null, DataBinding);
+    function DataBinding(listPage) {
+        var setdata = $('#LoadListPage');
+        for (var i = 0; i < listPage.length; i++) {
+            var data = "<tr class='row_" + listPage[i].MaPage + " " + listPage[i].Slug + "' id='id_" + listPage[i].MaPage + "'>" +
+                "<td>" + listPage[i].MaPage + "</td>" +
+                "<td>" + listPage[i].Title + "</td>" +
+                "<td>" + listPage[i].Slug + "</td>" +
+                "<td>" + listPage[i].HasSidebar + "</td>" +
+                "<td>" + "<a class='btn btn-info' onclick='EditPage(" + listPage[i].MaPage + ")'><span class='glyphicon glyphicon-edit'></span></a>" + "</td>" +
+                "<td>" + "<a class='btn btn-danger' onclick='DeletePage(" + listPage[i].MaPage + ")'><span class='glyphicon glyphicon-trash'></span></a>" + "</td>" +
+                "</tr>";
+            setdata.append(data);
+            $('#LoadingStatus').html("");
+        }
+    }
+
+    //call popup modal add new page
+    function AddNewPage(PageId) {
+        $('#form')[0].reset();
+        $('#MaPage').val(0);
+        $('#titleModal').html("Add new Page");
+        $('#mymodal').modal('show');
+    }
+
+    function ValidateForm() {
+        $('.submitForm').validate({
+            rules: {
+                Title: {
+                    required: true,
+                },
+                Body: {
+                    required: true,
+                }
+            },
+            messages: {
+                Title: {
+                    required: "Bạn phải nhập Title",
+                },
+                Body: {
+                    required: "Bạn phải nhập Body",
+                }
+            }
+        })
+    }
+
+    //function update and add new page to database
+    $('#Save').click(function () {
+        ValidateForm();
+        var data = $('.submitForm').serialize();//get value from input
+        console.log(data);
+        $.ajax({
+            type: "Post",
+            url: "/Admin/Pages/SaveDatabase",
+            data: data,
+            success: function (respone) {
+                if (respone == true) {
+                    window.location.href = "/Admin/Pages";
+                    $('#mymodal').modal('hide');
+                    console.log(data);
+                }
+                else {
+                    alert("Fail")
+                }
+            }
+        })
+    })
+
+    function EditPage(idPage) {
+        var url = "/Admin/Pages/GetIdPage?idPage=" + idPage;
+        $('#titleModal').html("Edit Page");
+        $('#mymodal').modal('show');
+        $.ajax({
+            type: "Get",
+            url: url,
+            success: function (data) {
+                var obj = JSON.parse(data);
+                $('#MaPage').val(obj.MaPage);
+                $('#Title').val(obj.Title);
+                $('#Slug').val(obj.Slug);
+                $('#Body').val(obj.Body);
+                $('#HasSidebar').prop('checked', obj.HasSidebar);
+                $('#HasSidebar').val(obj.HasSidebar);
+            }
+        })
+    }
+    function DeletePage(idPage) {
+        $('#modalConfirm').modal('show');
+        $('#MaPage').val(idPage);
+    }
+    function DeleteConfirm() {
+        var id = $('#MaPage').val();
+        $.ajax({
+            type: "Post",
+            url: "/Admin/Pages/DeletePage?idPage=" + id,
+            success: function (result) {
+                if (result == true) {
+                    alert("Delete successfully");
+                    $('#modalConfirm').modal('hide');
+                    $(".row_" + id).remove();
+                }
+            }
+        })
+    }
+
+    $("table#pages tbody").sortable({
+        items: "tr:not(.home)",
+        placeholder: "ui-state-highlight",
+        update: function () {
+            var ids = $("table#pages tbody").sortable("serialize");
+            var url = "/Admin/Pages/ReorderPages";
+            $.post(url, ids, function (data) {
+            });
+        }
+    });
+</script>
+

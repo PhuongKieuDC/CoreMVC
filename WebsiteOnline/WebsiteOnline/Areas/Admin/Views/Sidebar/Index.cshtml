@@ -1,0 +1,153 @@
+﻿@model WebsiteOnline.Models.Data.Sidebar
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+@if (TempData["SMS"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SMS"]
+    </div>
+}
+
+<div class="container" style="margin-top: 20px">
+    <a class="btn btn-info" onclick="AddNewSidebar(0)">Add New Sidebar</a>
+    <br />
+    <table class="table table-striped table-responsive sorting">
+        <thead>
+            <tr>
+                <th>MaSidebar</th>
+                <th>Body</th>
+                <th>Action(Edit)</th>
+                <th>Action(Delete)</th>
+            </tr>
+        </thead>
+        <tbody id="LoadListSidebar">
+            <tr id="LoadingStatus" style="color: red"></tr>
+        </tbody>
+    </table>
+    <a href="/Admin/Dashboard" class="btn btn-success" style="margin-top:15px">Back to dashboard</a>
+</div>
+
+<div class="modal fade" id="mymodal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h4 id="titleModal"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="form">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <fieldset class="submitForm">
+                        @Html.HiddenFor(x => x.MaSidebar, new { @id = "MaSidebar" })
+                        <div class="form-group">
+                            @Html.TextAreaFor(x => x.Body, new { @id = "Body", @class = "form-control", @placeholder = "Body" })
+                            @Html.ValidationMessageFor(x => x.Body, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <a class="btn btn-block btn btn-success" id="Save">Save</a>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmdelete">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h4>Delete sidebar</h4>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure delete sidebar!</h4>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary" data-dismiss="modal">Cancel</a>
+                <a class="btn btn-danger" onclick="DeleteConfirm()">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#LoadingStatus').html("Loading...................");
+    $.get("/Admin/Sidebar/getListSidebar", null, DataBinding);
+    function DataBinding(list) {
+        var setData = $('#LoadListSidebar');
+        for (var i = 0; i < list.length; i++) {
+            var data = "<tr class='row_" + list[i].MaSidebar + "'>" +
+                "<td>" + list[i].MaSidebar + "</td>" +
+                "<td>" + list[i].Body + "</td>" +
+                "<td>" + "<a class='btn btn-info' onclick='EditSidebar(" + list[i].MaSidebar + ")'><span class='glyphicon glyphicon-edit'></span></a>" + "</td>" +
+                "<td>" + "<a class='btn btn-danger' onclick='DeleteSidebar(" + list[i].MaSidebar + ")'><span class='glyphicon glyphicon-trash'></span></a>" + "</td>" +
+                "</tr>";
+            setData.append(data);
+            $('#LoadingStatus').html("");
+        }
+    }
+    function AddNewSidebar(id) {
+        $('#form')[0].reset();
+        $('#MaSidebar').val(0);
+        $('#mymodal').modal('show');
+        $('#titleModal').html("Add new sidebar");
+    }
+    $('#Save').click(function () {
+        var data = $('.submitForm').serialize();
+        $.ajax({
+            type: "Post",
+            url: "/Admin/Sidebar/SaveDatabase",
+            data: data,
+            success: function (result) {
+                if (result == true) {
+                    window.location.href = "/Admin/Sidebar";
+                    $('#mymodal').modal('hide');
+                    console.log(data);
+                }
+                else {
+                    alert("Fail")
+                }
+            }
+        })
+    })
+    function EditSidebar(idSide) {
+        $('#mymodal').modal('show');
+        $('#titleModal').html("Edit sidebar");
+        var url = "/Admin/Sidebar/GetIdSidebar?id=" + idSide;
+        $.ajax({
+            type: "Get",
+            url: url,
+            success: function (data) {
+                var obj = JSON.parse(data);
+                $('#MaSidebar').val(obj.MaSidebar);
+                $('#Body').val(obj.Body);
+            }
+        })
+    }
+    function DeleteSidebar(id) {
+        $('#confirmdelete').modal('show');
+        $('#MaSidebar').val(id);
+    }
+    function DeleteConfirm() {
+        var id = $('#MaSidebar').val();
+        $.ajax({
+            type: "Post",
+            url: "/Admin/Sidebar/DeleteSidebar?id=" + id,
+            success: function (result) {
+                if (result == true) {
+                    alert("Delete successfully");
+                    $('#confirmdelete').modal('hide');
+                    $('.row_' + id).remove();
+                }
+            }
+        })
+    }
+</script>
+

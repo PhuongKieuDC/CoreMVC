@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="2b007a156b6546c6b3cd661967c3fb6e" Name="Diagram1">
+        <EntityTypeShape EntityType="ProjectReviewModel.ChiTietDonHang" Width="1.5" PointX="5.25" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectReviewModel.DanhMuc" Width="1.5" PointX="0.75" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectReviewModel.DonHang" Width="1.5" PointX="3" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectReviewModel.KhachHang" Width="1.5" PointX="0.75" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectReviewModel.LienHe" Width="1.5" PointX="3" PointY="8.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectReviewModel.NhanVien" Width="1.5" PointX="3.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectReviewModel.NVRole" Width="1.5" PointX="6" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectReviewModel.Page" Width="1.5" PointX="7.75" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectReviewModel.Role" Width="1.5" PointX="3.75" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectReviewModel.SanPham" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectReviewModel.Sidebar" Width="1.5" PointX="7.75" PointY="6.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectReviewModel.UserRole" Width="1.5" PointX="6" PointY="8.75" IsExpanded="true" />
+        <AssociationConnector Association="ProjectReviewModel.FK_ChiTietDonHang_DonHang" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectReviewModel.FK_ChiTietDonHang_SanPham" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectReviewModel.FK_SanPham_DanhMuc" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectReviewModel.FK_DonHang_KhachHang" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectReviewModel.FK_LienHe_KhachHang" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectReviewModel.FK_UserRole_KhachHang" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectReviewModel.FK_NVRole_NhanVien" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectReviewModel.FK_NVRole_Role" ManuallyRouted="false" />
+        <AssociationConnector Association="ProjectReviewModel.FK_UserRole_Role" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
