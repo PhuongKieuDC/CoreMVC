@@ -1,0 +1,138 @@
+﻿@model IEnumerable<WebsiteOnline.Models.Data.DanhMuc>
+
+@{
+    ViewBag.Title = "Categories";
+}
+<style>
+    .new-cat {
+        margin-top: 30px;
+        position: relative;
+    }
+
+    .ajax-text {
+        display: none;
+    }
+</style>
+<h2>Categories</h2>
+<div class="new-cat">
+    <input type="text" id="newcatname" class="form-control" />
+    <p>
+        <a id="newcat">Add a new category</a>
+        <span class="ajax-text">
+            <img src="~/Content/img/ajax-loader.gif" />
+        </span>
+    </p>
+</div>
+
+@if (!Model.Any())
+{
+    <h4 class="text-center">There are no category</h4>
+}
+else
+{
+    <table class="table sorting" id="pages">
+        <tr class="home">
+            <th>
+                @Html.DisplayNameFor(model => model.Ten)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.EditorFor(modelItem => item.Ten, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                </td>
+                <td>
+                    @Html.ActionLink("Delete", "DeleteCategory", new { id = item.MaDanhMuc }, new { @class = "delete" })
+                </td>
+            </tr>
+        }
+
+    </table>
+}
+@section Scripts{
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+    <script>
+        $(function () {
+            var newcata = $('a#newcat');
+            var newinput = $('#newcatname');
+            var ajaxtext = $('span.ajax-text');
+            var tabledata = $('table#page tbody');
+
+            //nêu bấm enter sự kiện ở đường dẫn a được thực hiện
+            newinput.keyup(function (e) {
+                if (e.keyCode == 13) {
+                    newcata.click();
+                }
+            });
+
+            newcata.click(function (e) {
+                e.preventDefault(); //không chuyển trang
+
+                var catname = newinput.val(); //get giá trị của input
+
+                //validate input name category
+                if (catname.length < 2) {
+                    alert("Category name must be at least 2 characters long");
+                    return false;
+                }
+
+                ajaxtext.show();
+
+                var url = "/admin/shop/AddNewCategory";
+
+                //ajax method post
+                $.post(url, { catname: catname }, function (data) {
+                    var response = data.trim();
+
+                    if (response == "titletaken") {
+                        ajaxtext.html("<span class='alert alert-danger'>That title is taken!</span>");
+                        setTimeout(function () {
+                            ajaxtext.fadeOut("fast", function () {
+                                ajaxtext.html("<img src='~/Content/img/ajax-loader.gif' />");
+                            })
+                        }, 2000);
+                        return false;
+                    }
+                    else {
+                        if (!$('#table#pages').length) {
+                            location.reload();
+                        }
+                        else {
+                            ajaxtext.html("<span class='alert alert-success'>Category has been added");
+                            setTimeout(function () {
+                                ajaxtext.fadeOut("fast", function () {
+                                    ajaxtext.html("<img src='~/Content/img/ajax-loader.gif' />");
+                                })
+                            }, 2000);
+
+                            newinput.val("");
+                            var toAppend = $('table#pages tbody tr:last').clone();
+                            toAppend.attr("id", "id_" + data);
+                            toAppend.find("#item_Name").val(catname);
+                            toAppend.find("a.delete").attr("href", "/admin/shop/DeleteCategory/" + data);
+                            tabledata.append(toAppend);
+                            tabledata.sortable("refresh");
+                        }
+                    }
+                });
+            });
+
+            $('a.delete').click(function () {
+                if (!confirm("Confirm category delete")) return false;
+            });
+        })
+        $("table#pages tbody").sortable({
+            items: "tr:not(.home)",
+            placeholder: "ui-state-highlight",
+            update: function () {
+                var ids = $("table#pages tbody").sortable("serialize");
+                var url = "/Admin/Pages/ReorderPages";
+                $.post(url, ids, function (data) {
+                });
+            }
+        });
+    </script>
+}
