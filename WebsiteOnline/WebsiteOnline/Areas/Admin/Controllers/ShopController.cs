@@ -36,5 +36,55 @@ namespace WebsiteOnline.Areas.Admin.Controllers
 
             return id;
         }
+
+        [HttpPost]
+        public string renameCategory(string newCatName, int id)
+        {
+            if (db.DanhMucs.Any(x => x.Ten == newCatName))
+            {
+                return "titletaken";
+            }
+
+            DanhMuc danhMuc = db.DanhMucs.Find(id);
+            danhMuc.Ten = newCatName;
+            danhMuc.Slug = newCatName.Replace(" ", "-").ToLower();
+            danhMuc.Sort = 100;
+            db.SaveChanges();
+            return "Ok";
+        }
+
+        [HttpPost]
+        public void ReorderPages(int[] id)
+        {
+
+            // Set initial count
+            int count = 1;
+
+            // Declare PageDTO
+            DanhMuc dto = new DanhMuc();
+
+            // Set sorting for each page
+            foreach (var cateId in id)
+            {
+                dto = db.DanhMucs.Find(cateId);
+                dto.Sort = count;
+
+                db.SaveChanges();
+
+                count++;
+            }
+        }
+
+        public ActionResult DeleteCategory(int id)
+        {
+            DanhMuc danhMuc = db.DanhMucs.Find(id);
+
+            if( danhMuc != null)
+            {
+                db.DanhMucs.Remove(danhMuc);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Categories");
+        }
     }
 }

@@ -40,8 +40,10 @@ else
 
         @foreach (var item in Model)
         {
-            <tr>
+            <tr id="id_@item.MaDanhMuc">
+                
                 <td>
+                    <div class="ajaxdiv"></div>
                     @Html.EditorFor(modelItem => item.Ten, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 </td>
                 <td>
@@ -55,6 +57,8 @@ else
 @section Scripts{
     <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
     <script>
+
+        //add new category
         $(function () {
             var newcata = $('a#newcat');
             var newinput = $('#newcatname');
@@ -88,7 +92,7 @@ else
                     var response = data.trim();
 
                     if (response == "titletaken") {
-                        ajaxtext.html("<span class='alert alert-danger'>That title is taken!</span>");
+                        ajaxtext.html("<span class='alert alert-danger'>That title is taken!</span>").show();
                         setTimeout(function () {
                             ajaxtext.fadeOut("fast", function () {
                                 ajaxtext.html("<img src='~/Content/img/ajax-loader.gif' />");
@@ -101,7 +105,7 @@ else
                             location.reload();
                         }
                         else {
-                            ajaxtext.html("<span class='alert alert-success'>Category has been added");
+                            ajaxtext.html("<span class='alert alert-success'>Category has been added</span>").show();
                             setTimeout(function () {
                                 ajaxtext.fadeOut("fast", function () {
                                     ajaxtext.html("<img src='~/Content/img/ajax-loader.gif' />");
@@ -109,7 +113,7 @@ else
                             }, 2000);
 
                             newinput.val("");
-                            var toAppend = $('table#pages tbody tr:last').clone();
+                            var toAppend = $('table#pages tbody tr:last').clone();//copy last tr
                             toAppend.attr("id", "id_" + data);
                             toAppend.find("#item_Name").val(catname);
                             toAppend.find("a.delete").attr("href", "/admin/shop/DeleteCategory/" + data);
@@ -120,19 +124,70 @@ else
                 });
             });
 
+            //delete category
             $('a.delete').click(function () {
                 if (!confirm("Confirm category delete")) return false;
             });
         })
+
+        //sort record table
         $("table#pages tbody").sortable({
             items: "tr:not(.home)",
             placeholder: "ui-state-highlight",
             update: function () {
                 var ids = $("table#pages tbody").sortable("serialize");
-                var url = "/Admin/Pages/ReorderPages";
+                var url = "/Admin/Shop/ReorderPages";
                 $.post(url, ids, function (data) {
+                    location.reload();
                 });
             }
         });
+
+        //value mới
+        var originalTextbox;
+        $("table#pages input.text-box").dblclick(function () {
+            orginalTextbox = $(this).val();
+            //alert(originalTextbox);
+            $(this).attr("readonly", false);
+        });
+
+        $("table#pages input.text-box").keyup(function (e) {
+            if (e.keyCode == 13) {
+                $(this).blur(); //thoat khoi focus
+            }
+        });
+
+        $("table#pages input.text-box").blur(function () {
+            var $this = $(this);
+            var ajaxdiv = $this.parent().find(".ajaxdiv");
+            var newCatName = $this.val();
+            var id = $this.parent().parent().attr("id").substring(3);
+            var url = "/admin/shop/renameCategory";
+
+            if (newCatName.length < 2) {
+                alert("Category name must be at least 2 characters long");
+                $this.attr("readonly", true);
+                return false;
+            }
+            $.post(url, { newCatName: newCatName, id: id }, function (data) {
+                var respone = data.trim();
+
+                if (respone == "titletaken") {
+                    $(this).val(orginalTextbox);
+                    ajaxdiv.html("<span class='alert alert-danger'>That title is taken!</span>").show();
+                }
+                else {
+                    ajaxdiv.html("<span class='alert alert-success'>That title is changed!</span>").show();
+                }
+                setTimeout(function () {
+                    ajaxdiv.fadeOut("fast", function () {
+                        ajaxdiv.html("");
+                    })
+                }, 2000);
+            }).done(function () {
+                $this.attr("readonly", true);
+            })
+        })
+        //rename category
     </script>
 }
