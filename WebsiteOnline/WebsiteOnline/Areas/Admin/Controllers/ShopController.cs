@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WebsiteOnline.Models.Data;
+using WebsiteOnline.Models.ViewModel;
 
 namespace WebsiteOnline.Areas.Admin.Controllers
 {
@@ -85,6 +86,15 @@ namespace WebsiteOnline.Areas.Admin.Controllers
                 db.SaveChanges();
             }
             return RedirectToAction("Categories");
+        }
+
+        public ActionResult AddProduct()
+        {
+            List<DanhMuc> list = db.DanhMucs.ToList();
+            ProductViewModel product = new ProductViewModel();
+
+            ViewBag.listDanhMuc = new SelectList(list, "MaDanhMuc", "Ten");
+            return View();
         }
     }
 }
