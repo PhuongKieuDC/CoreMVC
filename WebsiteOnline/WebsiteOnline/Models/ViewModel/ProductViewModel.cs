@@ -11,9 +11,15 @@ namespace WebsiteOnline.Models.ViewModel
     {
         [Display(Name = "Mã Sản Phẩm")]
         public int MaSanPham { get; set; }
+
+        [Required]
         [Display(Name = "Tên sản phẩm")]
         public string Ten { get; set; }
+
+        [Required]
         public string Slug { get; set; }
+
+        [Required]
         [Display(Name = "Mô tả")]
         public string MoTa { get; set; }
         [Display(Name = "Đơn giá")]

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using WebsiteOnline.Models.Data;
 using WebsiteOnline.Models.ViewModel;
@@ -88,6 +90,7 @@ namespace WebsiteOnline.Areas.Admin.Controllers
             return RedirectToAction("Categories");
         }
 
+        //get method addproduct
         public ActionResult AddProduct()
         {
             List<DanhMuc> list = db.DanhMucs.ToList();
@@ -95,6 +98,98 @@ namespace WebsiteOnline.Areas.Admin.Controllers
 
             ViewBag.listDanhMuc = new SelectList(list, "MaDanhMuc", "Ten");
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult AddProduct(ProductViewModel productViewModel, HttpPostedFileBase file)
+        {
+            if(!ModelState.IsValid)
+            {
+                List<DanhMuc> list = db.DanhMucs.ToList();
+                ViewBag.listDanhMuc = new SelectList(list, "MaDanhMuc", "Ten");
+                return View(productViewModel);
+            }
+
+            if (db.SanPhams.Any(x => x.Ten == productViewModel.Ten))
+            {
+                //List<DanhMuc> list = db.DanhMucs.ToList();
+                //ViewBag.listDanhMuc = new SelectList(list, "MaDanhMuc", "Ten");
+                ModelState.AddModelError("", "Tên sản phẩm đã tồn tại");
+                return View(productViewModel);
+            }
+
+            int id;
+
+            SanPham sanPham = new SanPham();
+            sanPham.Ten = productViewModel.Ten;
+            sanPham.Slug = productViewModel.Slug;
+            sanPham.MoTa = productViewModel.MoTa;
+            sanPham.Gia = productViewModel.Gia;
+            sanPham.SoLuongTon = productViewModel.SoLuongTon;
+            sanPham.Available = productViewModel.Available;
+            sanPham.MaDanhMuc = productViewModel.MaDanhMuc;
+
+            db.SanPhams.Add(sanPham);
+            db.SaveChanges();
+
+            id = sanPham.MaSanPham;
+
+            TempData["Message"] = "Sản phẩm thêm thành công";
+
+            #region upload image
+
+            //create directories
+            var originalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
+
+            var pathstring1 = Path.Combine(originalDirectory.ToString(), "SanPhams");
+            var pathstring2 = Path.Combine(originalDirectory.ToString(), "SanPhams" + id.ToString());
+            var pathstring3 = Path.Combine(originalDirectory.ToString(), "SanPhams" + id.ToString() + "\\Thumbs");
+            var pathstring4 = Path.Combine(originalDirectory.ToString(), "SanPhams" + id.ToString() + "\\Gallery");
+            var pathstring5 = Path.Combine(originalDirectory.ToString(), "SanPhams" + id.ToString() + "\\Gallery\\Thumbs");
+
+            if (!Directory.Exists(pathstring1))
+                Directory.CreateDirectory(pathstring1);
+            if (!Directory.Exists(pathstring2))
+                Directory.CreateDirectory(pathstring2);
+            if (!Directory.Exists(pathstring3))
+                Directory.CreateDirectory(pathstring3);
+            if (!Directory.Exists(pathstring4))
+                Directory.CreateDirectory(pathstring4);
+            if (!Directory.Exists(pathstring5))
+                Directory.CreateDirectory(pathstring5);
+
+            if (file != null && file.ContentLength > 0)
+            {
+                string ext = file.ContentType.ToLower();
+
+                if (ext != "image/jpg" &&
+                    ext != "image/jpeg" &&
+                    ext != "image/pjpeg" &&
+                    ext != "image/gif" &&
+                    ext != "image/x-png" &&
+                    ext != "image/png")
+                {
+                    ModelState.AddModelError("", "Hình ảnh upload không thành công");
+                    return View(productViewModel);
+                }
+                string imagename = file.FileName;
+
+                sanPham = db.SanPhams.Find(id);
+                sanPham.Hinh = imagename;
+                db.SaveChanges();
+
+                var path = string.Format("{0}\\{1}", pathstring2, imagename);
+                var path2 = string.Format("{0}\\{1}", pathstring3, imagename);
+
+                file.SaveAs(path);
+
+                WebImage img = new WebImage(file.InputStream);
+                img.Resize(200, 200);
+                img.Save(path2);
+            }
+            db.SaveChanges();
+            #endregion
+            return RedirectToAction("AddProduct");
         }
     }
 }
